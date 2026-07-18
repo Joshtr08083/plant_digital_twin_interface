@@ -14,4 +14,4 @@ def latest_readings(request):
             "value": r.value
         } for r in readings
     ]
-    return JsonResponse({"readiings": data})
+    return JsonResponse({"readings": data})

@@ -4,5 +4,5 @@ async function poll() {
     document.getElementById('readings').innerHTML =
         data.readings.map(r => `<li>${r.timestamp} — ${r.raw}</li>`).join('');
 }
-setInterval(poll, 1000);
+setInterval(poll, 50);
 poll();
