@@ -1,0 +1,7 @@
+services:
+  webapp:
+    volumes:
+      - ./backend_django:/app
+  telemetry:
+    volumes:
+      - ./backend_django:/app

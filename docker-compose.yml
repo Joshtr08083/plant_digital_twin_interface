@@ -1,0 +1,48 @@
+services:
+  database:
+    image: postgres:16
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - pgdatabase:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build: .
+    image: joshtr083/pdigtwinterface:latest
+    env_file: .env
+    depends_on:
+      database:
+        condition: service_healthy
+    command: python manage.py migrate
+
+  webapp:
+    build: .
+    image: joshtr083/pdigtwinterface:latest
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: python manage.py runserver 0.0.0.0:8000
+  
+  telemetry:
+    build: .
+    image: joshtr083/pdigtwinterface:latest
+    restart: unless-stopped
+    env_file: .env
+    devices:
+      - ${SERIAL_PORT:-/dev/ttyUSB0}:${SERIAL_PORT:-/dev/ttyUSB0}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: python manage.py read_serial --port ${SERIAL_PORT:-/dev/ttyUSB0} --baud ${SERIAL_BAUD:-115200}
+    
+volumes:
+  pgdatabase:

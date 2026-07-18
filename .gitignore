@@ -106,7 +106,7 @@ media/
 *.pyc
 *.db
 *.pid
-
+db.sqlite3
 
 # Dependencies
 node_modules/
@@ -156,3 +156,4 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
