@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  --text: #ffffff;
+  --text-h: #f3f4f6;
+  --bg: #212529;
+  --border: #43474A;
+
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-width: 100%;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  color: var(--text);
+  border-color: var(--border);
+}
