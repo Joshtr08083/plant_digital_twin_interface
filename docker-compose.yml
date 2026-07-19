@@ -1,4 +1,9 @@
 services:
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
   database:
     image: postgres:16
     restart: unless-stopped
@@ -30,7 +35,9 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-    command: python manage.py runserver 0.0.0.0:8000
+      redis:
+        condition: service_started
+    command: daphne -b 0.0.0.0 -p 8000 project.asgi:application
   
   telemetry:
     build: .
@@ -42,7 +49,16 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-    command: python manage.py read_serial --port ${SERIAL_PORT:-/dev/ttyUSB0} --baud ${SERIAL_BAUD:-115200}
+      redis:
+        condition: service_started
+    command: >
+      python manage.py read_serial
+      --port ${SERIAL_PORT:-/dev/ttyUSB0}
+      --baud ${SERIAL_BAUD:-115200}
+      --retention-seconds ${RETENTION_SECONDS:-10}
+      --broadcast-interval ${BROADCAST_INTERVAL:-0.1}
+      --db-batch-size ${DB_BATCH_SIZE:-50}
+      --prune-interval ${PRUNE_INTERVAL:-2.0}
     
 volumes:
   pgdatabase:
