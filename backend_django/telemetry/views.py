@@ -9,9 +9,12 @@ def latest_readings(request):
     readings = SensorReading.objects.all()[:20]
     data = [
         {
-            "timestamp": r.timestamp.isoformat(), 
-            "raw": r.raw_line, 
-            "value": r.value
-        } for r in readings
+            "timestamp": r.timestamp.isoformat(),
+            "raw": r.raw_line,
+            "value": r.value,
+            "status": r.status,
+            "error": r.error,
+        }
+        for r in readings
     ]
     return JsonResponse({"readings": data})

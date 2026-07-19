@@ -1,4 +1,4 @@
-import serial, time
+import serial, time, json
 from datetime import timedelta
 from django.core.management.base import BaseCommand
 from telemetry.models import SensorReading
@@ -33,19 +33,21 @@ class Command(BaseCommand):
                 if not line:
                     continue
                 
-                try:
-                    value = float(line)
-                except ValueError:
-                    value = None
-                    
-                buffer.append(SensorReading(raw_line=line, value=value))
+                status, value, error = self.parse_line(line)
+                
+                buffer.append(SensorReading(
+                    raw_line=line,
+                    value=value,
+                    status=status,
+                    error=error,
+                ))
                 
                 if (len(buffer) >= options['db_batch_size']):
                     SensorReading.objects.bulk_create(buffer)
                     buffer.clear()
                     
                 now = time.monotonic()
-                if ((now - last_broadcast) >= options['broadcast_interval']):
+                if now - last_broadcast >= options['broadcast_interval']:
                     async_to_sync(channel_layer.group_send)(
                         "live_readings",
                         {
@@ -54,7 +56,9 @@ class Command(BaseCommand):
                                 "timestamp": timezone.now().isoformat(),
                                 "raw": line,
                                 "value": value,
-                            }
+                                "status": status,
+                                "error": error,
+                            },
                         }
                     )
                     last_broadcast = now
@@ -65,10 +69,20 @@ class Command(BaseCommand):
                     if (deleted):
                         self.stdout.write(f"Pruned {deleted} old readings")
                     last_prune = now
-                    
-                SensorReading.objects.create(raw_line=line, value=value)
-                self.stdout.write(f"Saved: {line}")
+                
+                if status != 200:
+                    self.stderr.write(f"Sensor error: {error} (raw: {line})")
                 
             except serial.SerialException as e:
                 self.stderr.write(f"Serial error: {e}")
                 time.sleep(1)
+                
+    def parse_line(self, line):
+        try:
+            data = json.loads(line)
+            status = data.get('status')
+            value = data.get('value')
+            error = data.get('error')
+            return status, value, error
+        except (json.JSONDecodeError, AttributeError):
+            return None, None, f"unparseable line: {line}"
