@@ -1,0 +1,10 @@
+services:
+  # dont start telemetry
+  telemetry:
+    deploy:
+      replicas: 0
+
+  # expose redis, which properly isnt the safest but its a workaround for now
+  redis:
+    ports:
+      - "6379:6379"
