@@ -1,24 +1,31 @@
+import Chart from './components/Chart'
 import './App.css'
 import Plant from "./components/Plant"
+import { useWebsockets } from './api/WebSockets';
+import Table from "./components/Table"
 
 function App() {
+  const { dataPoints, status } = useWebsockets(5);
+
   return (
     <>
       <main>
         <div className="w-full h-full flex flex-row">
-          <div className="ml-0">
-            
+          <div className="ml-0 w-xl flex flex-col h-full pl-6 justify-center">
+            <div className="m-auto w-full h-64">
+              <Chart dataPoints={dataPoints}/>
+            </div>
           </div>
-          <div className="mx-auto flex flex-col h-full overflow-visible w-full">
-            <h1 className="mx-auto border-b-2 px-50 mt-4 text-3xl pb-2">PLANT VIEWER</h1>
+          <div className="mx-auto flex flex-col h-full overflow-visible w-2xl grow">
             <Plant />
           </div>
-          <div className="mr-0">
-            
+          <div className="mr-0 w-xl flex flex-col h-full pr-6 justify-center">
+              <Table dataPoints={dataPoints}/>
           </div>
         </div>
       </main>
     </>
+
   )
 }
 

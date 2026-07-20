@@ -46,7 +46,7 @@ export function Plant() {
 
 
   return (
-    <Canvas className="cursor-grab" camera={{ position: [5, 3, 0]}}>
+    <Canvas className="cursor-grab" camera={{ position: [-5, 3, 0]}}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[0, 10, 0]} intensity={2} />
         <OrbitControls

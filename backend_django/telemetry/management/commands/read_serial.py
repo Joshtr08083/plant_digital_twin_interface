@@ -85,4 +85,11 @@ class Command(BaseCommand):
             error = data.get('error')
             return status, value, error
         except (json.JSONDecodeError, AttributeError):
-            return None, None, f"unparseable line: {line}"
+            last_brace = line.rfind('{')
+            if last_brace > 0:
+                try:
+                    data = json.loads(line[last_brace:])
+                    return data.get('status'), data.get('value'), data.get('error')
+                except (json.JSONDecodeError, AttributeError):
+                    pass
+            return None, None, f"unparseable line: {line[:100]}"

@@ -3,7 +3,7 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: redist-server --requirepass ${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD}
 
   database:
     image: postgres:16
