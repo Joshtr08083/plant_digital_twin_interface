@@ -69,7 +69,7 @@ const Chart = ({dataPoints, id, settings} : Props) => {
 
   return (
 
-    <div className=" w-full h-72 border rounded-lg shadow-xl/50">
+    <div className=" w-full h-72 border  rounded-lg shadow-xl/50">
         <h2 className="m-auto text-center py-2 border-b" style={{backgroundColor: "var(--secondary)"}}>CHART [{id}]</h2>
         <div className="p-5">
             <Line data={chartData} options={options} />

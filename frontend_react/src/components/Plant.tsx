@@ -17,6 +17,9 @@ import { useGLTF } from '@react-three/drei'
 import { type GLTF } from 'three-stdlib'
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import { useEffect, useRef } from 'react';
+
+import type { LeafStates, MaterialKey } from '../api/useReadings';
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -40,12 +43,43 @@ type GLTFResult = GLTF & {
 
 const POS = {x: 0, y: -0.1, z: 0}
 
-export function Plant() {
-  const { nodes, materials } = useGLTF('/plant.gltf') as unknown as GLTFResult
+interface Props {
+  leafStates: LeafStates;
+}
+const leaf_inactive_color = new THREE.Color().lerpColors(
+  new THREE.Color('#4AC74C'),
+  new THREE.Color('#99D9FF'), 
+  0
+);
+const leaf_active_color = new THREE.Color().lerpColors(
+  new THREE.Color('#4AC74C'),
+  new THREE.Color('#99D9FF'), 
+  5
+);
 
+export function Plant({leafStates} : Props) {
+  const { nodes, materials } = useGLTF('/plant.gltf') as unknown as GLTFResult
+  const lastTouchRef = useRef<Record<MaterialKey, number>>({ leaf1: 0, leaf2: 0, leaf3: 0, leaf4: 0 });
+
+  useEffect(() => {
+    if (!leafStates) return;
+    Object.entries(leafStates).forEach(([leafId, state]) => {
+      const mat = materials[leafId as MaterialKey] as THREE.MeshStandardMaterial;
+      
+      if (!lastTouchRef.current[leafId as MaterialKey]) lastTouchRef.current[leafId as MaterialKey] = performance.now();
+
+      if (state) {
+        mat.color.copy(leaf_active_color);
+        lastTouchRef.current[leafId as MaterialKey] = performance.now();
+      } else if (performance.now() - lastTouchRef.current[leafId as MaterialKey] > 500) {
+        mat.color.copy(leaf_inactive_color);
+      }
+      
+    })
+  }, [leafStates]);
 
   return (
-    <Canvas className="cursor-grab" camera={{ position: [-5, 3, 0]}}>
+    <Canvas className="cursor-grab overflow-visible" camera={{ position: [-5, 3, 0]}}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[0, 10, 0]} intensity={2} />
         <OrbitControls

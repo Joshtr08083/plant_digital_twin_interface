@@ -4,36 +4,35 @@ import Plant from "./components/Plant"
 import { useWebsockets } from './api/useWebsockets';
 import ReadingsTable from "./components/ReadingsTable"
 import { useSettings} from "./api/useSettings"
+import { useReadings } from './api/useReadings';
 import SettingsTable from './components/SettingsTable';
 import { useEffect } from 'react';
 
 function App() {
   const { dataPoints } = useWebsockets(5);
   const { settings, updateSetting, ensureSettings, loading } = useSettings();
-
+  const { latest, previous, absPerDiffs, leafStates} = useReadings(dataPoints, settings);
   useEffect(() => {
         if (loading) return;
-
-        const latest = dataPoints.at(-1);
-        if (!latest) return;
+        if (!latest || !latest.data) return;
 
         Object.keys(latest.data).forEach((id) => {
           if (!settings[id]) {
             ensureSettings(id);
           }
         });
-    }, [dataPoints, settings, ensureSettings, loading]);
+    }, [latest, settings, loading, ensureSettings]);
   
   return (
     <>
       <main className="relative">
         <div className="w-full h-full flex flex-row">
           <div className="ml-0 w-xl flex flex-col h-full pl-6 justify-center items-center gap-10">
-            <ReadingsTable dataPoints={dataPoints}/>
+            <ReadingsTable latest={latest} previous={previous} absPerDiffs={absPerDiffs}/>
             <Chart dataPoints={dataPoints} id={0} settings={settings} />            
           </div>
           <div className="mx-auto flex flex-col h-full overflow-visible w-2xl grow z-10">
-            <Plant />
+            <Plant leafStates={leafStates}/>
           </div>
           <div className="mr-0 w-xl flex flex-col h-full pr-6 justify-center">
             <SettingsTable settings={settings} updateSetting={updateSetting}/>

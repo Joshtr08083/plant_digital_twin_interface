@@ -1,14 +1,14 @@
-import type { DataPoint } from "../api/useWebsockets"
 import "./Table.css"
 
+import type { SensorData, AbsPerDiffs } from "../api/useReadings"
+
 interface Props {
-    dataPoints: DataPoint[];
+    latest: SensorData
+    previous: SensorData
+    absPerDiffs: AbsPerDiffs
 }
 
-const ReadingsTable = ({dataPoints} : Props) => {
-
-    const latest = dataPoints.at(-1)?.data as Record<string, any> | undefined;
-    const previous = dataPoints.at(-2)?.data as Record<string, any> | undefined;
+const ReadingsTable = ({latest, previous, absPerDiffs} : Props) => {
 
     return (
     <div className="overflow-x-auto border rounded-lg shadow-xl/50">
@@ -31,10 +31,10 @@ const ReadingsTable = ({dataPoints} : Props) => {
                                 <td>{id}</td>
                                 <td>{reading ?? "NA"}</td>
                                 {
-                                    (previous && id in previous)?(
+                                    (previous && id in previous && absPerDiffs && id in absPerDiffs)?(
                                         <>  
                                             <td>{previous[id] ?? "NA"}</td>
-                                            <td>{`${(Math.abs(((reading - previous[id]) / previous[id]) * 100)).toFixed(2)}%`}</td>
+                                            <td>{`${absPerDiffs[id].toFixed(2)}%`}</td>
                                         </>
                                     ):
                                     (
