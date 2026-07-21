@@ -1,0 +1,23 @@
+.alertBox {
+    opacity: 0%;
+    transition: opacity 0.3s ease;
+}
+
+.Mechanical {
+    background-color: hsla(from var(--secondary) h calc(s - 10) calc(l - 10) / 80%);
+}
+
+.Fire {
+    background-color: #121619;
+    color: #881600;
+    font-size: 3rem;
+    font-weight: 900;
+    top: 20%;
+    transform: translateY(-50%);
+}
+
+.showAlert {
+    display: block;
+    opacity: 100%;
+    
+}

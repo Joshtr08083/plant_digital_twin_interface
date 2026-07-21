@@ -19,7 +19,14 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useEffect, useRef } from 'react';
 
-import type { LeafStates, MaterialKey } from '../api/useReadings';
+import type { LeafStates } from '../api/useReadings';
+export type MaterialKey = 'leaf1' | 'leaf2' | 'leaf3' | 'leaf4'
+const idToLeafMatMap: Record<string, MaterialKey> = {
+    "0": 'leaf1',
+    "1": 'leaf2',
+    "2": 'leaf3',
+    "3": 'leaf4'
+}
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -59,27 +66,34 @@ const leaf_active_color = new THREE.Color().lerpColors(
 
 export function Plant({leafStates} : Props) {
   const { nodes, materials } = useGLTF('/plant.gltf') as unknown as GLTFResult
-  const lastTouchRef = useRef<Record<MaterialKey, number>>({ leaf1: 0, leaf2: 0, leaf3: 0, leaf4: 0 });
+  const resetMatTimeout = useRef<Record<MaterialKey, ReturnType<typeof setTimeout>>>({ leaf1: undefined as any, leaf2: undefined as any, leaf3: undefined as any, leaf4: undefined as any });
 
   useEffect(() => {
-    if (!leafStates) return;
+    if (leafStates == null) return;
+    console.log("F")
     Object.entries(leafStates).forEach(([leafId, state]) => {
-      const mat = materials[leafId as MaterialKey] as THREE.MeshStandardMaterial;
-      
-      if (!lastTouchRef.current[leafId as MaterialKey]) lastTouchRef.current[leafId as MaterialKey] = performance.now();
+      if (!(leafId in idToLeafMatMap)) return
+      const matId = idToLeafMatMap[leafId] as MaterialKey
 
+      const mat = materials[matId] as THREE.MeshStandardMaterial;
+      
       if (state) {
         mat.color.copy(leaf_active_color);
-        lastTouchRef.current[leafId as MaterialKey] = performance.now();
-      } else if (performance.now() - lastTouchRef.current[leafId as MaterialKey] > 500) {
-        mat.color.copy(leaf_inactive_color);
+      } else {
+        if (resetMatTimeout.current[matId]) {
+          clearTimeout(resetMatTimeout.current[matId]);
+        }
+        resetMatTimeout.current[matId] = setTimeout(() => {
+          console.log(mat);
+          mat.color.copy(leaf_inactive_color);
+        }, 1000)
       }
       
     })
   }, [leafStates]);
 
   return (
-    <Canvas className="cursor-grab overflow-visible" camera={{ position: [-5, 3, 0]}}>
+    <Canvas className="cursor-grab w-full h-full" camera={{ position: [-5, 3, 0]}}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[0, 10, 0]} intensity={2} />
         <OrbitControls

@@ -10,25 +10,32 @@ import {
 import { Line } from 'react-chartjs-2';
 import type { DataPoint } from "../api/useWebsockets";
 import type { SettingsMap } from '../api/useSettings';
+import ChartSelectors from './ChartSelectors';
+import { useState, useEffect } from "react"
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 interface Props {
     dataPoints: DataPoint[];
-    id: number;
     settings: SettingsMap;
 }
 
-const Chart = ({dataPoints, id, settings} : Props) => {
+const Chart = ({dataPoints, settings} : Props) => {
+    const [chartId, setChartId] = useState<string | undefined>(Object.keys(settings)[0]);
+
+    useEffect(() => {
+        const first = Object.keys(settings)[0];
+        if (first) setChartId(first);
+    }, [settings]);
 
     const yMax = 
-        (settings[id]?.max !== undefined && settings[id]?.max !== null && settings[id].max > 0) 
-        ? settings[id].max 
+        (chartId != null && settings[chartId]?.max != null && settings[chartId].max > 0) 
+        ? settings[chartId].max 
         : undefined;
 
     const yMin =
-        (settings[id]?.min !== undefined && settings[id]?.min !== null && yMax !== undefined)
-        ? settings[id].min
+        (chartId != null && settings[chartId]?.min != null && settings[chartId]?.min != null && yMax != null)
+        ? settings[chartId].min
         : undefined
 
     const chartData = {
@@ -37,8 +44,9 @@ const Chart = ({dataPoints, id, settings} : Props) => {
             {
                 label: 'Sensor value',
                 data: dataPoints.map((point) => {
-                    const sensorData = point.data as Record<number, number | null >;
-                    return sensorData[id] ?? null;
+                    const sensorData = point.data as Record<string, number | null >;
+                    if (chartId == null || !(chartId in sensorData))  return;
+                    return sensorData[chartId] ?? null;
                 }),
                 borderColor: "#207b3a",
                 tension: 0.2,
@@ -69,10 +77,13 @@ const Chart = ({dataPoints, id, settings} : Props) => {
 
   return (
 
-    <div className=" w-full h-72 border  rounded-lg shadow-xl/50">
-        <h2 className="m-auto text-center py-2 border-b" style={{backgroundColor: "var(--secondary)"}}>CHART [{id}]</h2>
-        <div className="p-5">
-            <Line data={chartData} options={options} />
+    <div className=" w-full flex flex-col">
+        <ChartSelectors settings={settings} chartId={chartId} setChartId={setChartId} />
+        <div className="border rounded-lg shadow-2xl/50 overflow-hidden">
+            <h2 className="m-auto text-center py-2 border-b" style={{backgroundColor: "var(--secondary)"}}>CHART {chartId}</h2>
+            <div className="p-5">
+                <Line data={chartData} options={options} />
+            </div>
         </div>
     </div>
   )

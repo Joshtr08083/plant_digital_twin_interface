@@ -7,16 +7,20 @@ import { useSettings} from "./api/useSettings"
 import { useReadings } from './api/useReadings';
 import SettingsTable from './components/SettingsTable';
 import { useEffect } from 'react';
+import Alert from './components/Alert';
+import EmojiScreen from './components/EmojiScreen';
+
 
 function App() {
-  const { dataPoints } = useWebsockets(5);
+  const { dataPoints, fire } = useWebsockets(5);
   const { settings, updateSetting, ensureSettings, loading } = useSettings();
-  const { latest, previous, absPerDiffs, leafStates} = useReadings(dataPoints, settings);
+  const { latest, previous, absPerDiffs, leafStates, leafPressed, showEmojis, setShowEmojis} = useReadings(dataPoints, settings, fire);
+
   useEffect(() => {
         if (loading) return;
-        if (!latest || !latest.data) return;
-
-        Object.keys(latest.data).forEach((id) => {
+        if (!latest) return;
+        
+        Object.keys(latest).forEach((id) => {
           if (!settings[id]) {
             ensureSettings(id);
           }
@@ -25,20 +29,23 @@ function App() {
   
   return (
     <>
-      <main className="relative">
-        <div className="w-full h-full flex flex-row">
-          <div className="ml-0 w-xl flex flex-col h-full pl-6 justify-center items-center gap-10">
-            <ReadingsTable latest={latest} previous={previous} absPerDiffs={absPerDiffs}/>
-            <Chart dataPoints={dataPoints} id={0} settings={settings} />            
-          </div>
-          <div className="mx-auto flex flex-col h-full overflow-visible w-2xl grow z-10">
-            <Plant leafStates={leafStates}/>
-          </div>
-          <div className="mr-0 w-xl flex flex-col h-full pr-6 justify-center">
-            <SettingsTable settings={settings} updateSetting={updateSetting}/>
-          </div>
+      <main className="relative flex flex-col xl:flex-row gap-10 " style={{backgroundColor: "var(--bg)"}}>
+        <div className="mx-auto flex flex-col overflow-visible w-full z-10 min-h-[80%] xl:absolute xl:h-screen">
+          <Plant leafStates={leafStates}/>
+        </div>
+        <div className="mx-auto w-full flex flex-col justify-center items-center gap-10 px-3 z-20 xl:w-sm 2xl:w-lg">
+          <ReadingsTable latest={latest} previous={previous} absPerDiffs={absPerDiffs}/>
+          <Chart dataPoints={dataPoints} settings={settings} />            
+        </div>
+        <div className="hidden xl:block xl:grow">
+
+        </div>
+        <div className="mx-auto w-full flex flex-col items-center justify-center z-20 px-3 pb-30 xl:pb-0 xl:w-xs 2xl:w-lg">
+          <SettingsTable settings={settings} updateSetting={updateSetting}/>
         </div>
         <h1 className="absolute left-1/2 -translate-x-1/2 top-5 text-4xl pb-2 px-20" style={{borderBottom: "2px solid var(--secondary)"}}>PLANT VIEWER</h1>
+        <Alert leafPressed={leafPressed} fire={fire} />
+        <EmojiScreen showEmojis={showEmojis} onClose={() => setShowEmojis(false)} />
       </main>
     </>
 

@@ -7,6 +7,7 @@
   --text: #ffffff;
   --text-opp: #000;
   --background: #212529;
+  --fire-bg: #703232;
   --primary: #dd9896;
   --secondary: #327044;
   --accent: #b5cc61;
@@ -15,7 +16,6 @@
 
   color-scheme: light dark;
 
-  background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -29,7 +29,8 @@
   :root {
     --text: #000000;
     --text-opp: #fff;
-    --background: #d5d9dd;
+    --background: #A30000;
+    --fire-bg: #eeb4a6;
     --primary: #b26566;
     --secondary: #c1d1a4;
     --accent: #8fc182;
@@ -40,6 +41,8 @@
 
 #root {
   min-width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 h1 {

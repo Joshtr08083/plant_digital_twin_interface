@@ -1,0 +1,7 @@
+.selected {
+    background-color: var(--secondary);
+}
+
+.unselected {
+    background-color: hsl(from var(--secondary) h calc(s - 20) calc(l - 20));
+}
