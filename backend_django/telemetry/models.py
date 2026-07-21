@@ -11,6 +11,9 @@ class SensorReading(models.Model):
     class Meta:
         ordering = ['-timestamp']
         
+    def __str__(self):
+        return f"Sensor readings timestamp={self.timestamp}, raw_line={self.raw_line}, data={self.data}, status={self.status}, error={self.error}"
+        
 class Settings(models.Model):
     key = models.TextField(unique=True)
     threshold = models.FloatField(null=True, blank=True)
@@ -20,3 +23,9 @@ class Settings(models.Model):
     def __str__(self):
         return f"Threshold/Limits {self.key}: threshold={self.threshold}, range=[{self.min_value}, {self.max_value}]"
 
+class Configs(models.Model):
+    key = models.CharField(max_length=50, unique=True)
+    value = models.TextField()
+    
+    def __str__(self):
+        return f"Configs {self.key}:{self.value}"

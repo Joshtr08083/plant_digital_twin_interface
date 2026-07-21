@@ -27,7 +27,6 @@ interface LatestReadingsResponse {
 export function useWebsockets(windowSeconds: number = 5) {
     const [dataPoints, setDataPoints] = useState<DataPoint[]>([]);
     const [status, setStatus] = useState<ConnectionStatus>({ok: false, message: 'Initalise'});
-    const [fire] = useState<boolean>(true);
     const wsRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
@@ -68,5 +67,5 @@ export function useWebsockets(windowSeconds: number = 5) {
         return () => socket.close();
     }, [windowSeconds])
 
-    return { dataPoints, status, fire }
+    return { dataPoints, status }
 }
