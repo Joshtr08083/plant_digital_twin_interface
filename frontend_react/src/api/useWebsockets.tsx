@@ -3,14 +3,15 @@ import { useEffect, useRef, useState } from "react";
 interface Reading {
     timestamp: string;
     raw: string;
-    value: number;
+    data: object;
     status: number;
     error: string;
 }
 
+
 export interface DataPoint {
-    t: string;
-    v: number;
+    time: string;
+    data: object;
 }
 
 export interface ConnectionStatus {
@@ -30,12 +31,12 @@ export function useWebsockets(windowSeconds: number = 5) {
 
     useEffect(() => {
 
-        fetch('/api/latest/')
+        fetch('/api/latest')
             .then((r) => r.json() as Promise<LatestReadingsResponse>)
             .then(({ readings }) => {
                 const seeded: DataPoint[] = readings
-                    .filter((r) => r.status === 200 && r.value !== null)
-                    .map((r) => ({ t:r.timestamp, v:r.value as number}));
+                    .filter((r) => r.status === 200 && r.data !== null)
+                    .map((r) => ({ time:r.timestamp, data:r.data}));
                 setDataPoints(seeded.reverse());
             });
         
@@ -45,12 +46,13 @@ export function useWebsockets(windowSeconds: number = 5) {
 
         socket.onmessage = (event: MessageEvent<string>) => {
             const reading: Reading = JSON.parse(event.data);
-            if (reading.status === 200 && reading.value !== null) {
+
+            if (reading.status === 200 && reading.data !== null) {
                 setStatus({ok: true, message: 'Live'});
                 setDataPoints((prev) => {
                     const cutoff = Date.now() - windowSeconds * 1000;
-                    const next = [...prev, { t: reading.timestamp, v: reading.value as number }];
-                    return next.filter((p) => new Date(p.t).getTime() >= cutoff);
+                    const next = [...prev, { time: reading.timestamp, data: reading.data}];
+                    return next.filter((p) => new Date(p.time).getTime() >= cutoff);
                 });
             } else {
                 setStatus({ ok: false, message: `Sensor error (${reading.status}): ${reading.error}` });

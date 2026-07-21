@@ -1,9 +1,43 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import SensorReading
+from .models import SensorReading, Settings
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
 
+@ensure_csrf_cookie
 def index(request):
     return render(request, 'telemetry/index.html')
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def settings_view(request):
+    # returns settings for all sensors by id
+    if request.method == "GET":
+        settings = {
+            s.key: {"threshold": s.threshold, "min": s.min_value, "max": s.max_value}
+            for s in Settings.objects.all()
+        }
+        return JsonResponse({"settings": settings})
+    
+    body = json.loads(request.body)
+    key = body.get("id") # key and id are the same, its just called key to avoid primary key issues
+    
+    setting, created = Settings.objects.get_or_create(key=key)
+    if "threshold" in body:
+        setting.threshold = body["threshold"]
+    if "min" in body:
+        setting.min_value = body["min"]
+    if "max" in body:
+        setting.max_value = body["max"]
+    setting.save()
+    
+    return JsonResponse({
+        "key": setting.key,
+        "threshold": setting.threshold,
+        "min": setting.min_value,
+        "max": setting.max_value,
+    })
 
 def latest_readings(request):
     readings = SensorReading.objects.all()[:20]
@@ -11,7 +45,7 @@ def latest_readings(request):
         {
             "timestamp": r.timestamp.isoformat(),
             "raw": r.raw_line,
-            "value": r.value,
+            "data": r.data,
             "status": r.status,
             "error": r.error,
         }

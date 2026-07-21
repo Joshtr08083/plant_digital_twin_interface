@@ -1,8 +1,15 @@
 td, th {
   padding: 8px;
 }
-
 thead {
-    background-color: rgba(0, 0, 0, 0.423);
-    color: white
+    background-color: var(--secondary);
+    color: var(--text);
 }
+.tdSelected {
+  background-color: var(--select-bg);
+  color: var(--select-text);
+}
+
+
+
+

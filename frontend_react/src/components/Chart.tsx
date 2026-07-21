@@ -8,23 +8,39 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import type { DataPoint} from "../api/WebSockets";
+import type { DataPoint } from "../api/useWebsockets";
+import type { SettingsMap } from '../api/useSettings';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 interface Props {
     dataPoints: DataPoint[];
+    id: number;
+    settings: SettingsMap;
 }
 
-const Chart = ({dataPoints} : Props) => {
-    
+const Chart = ({dataPoints, id, settings} : Props) => {
+
+    const yMax = 
+        (settings[id]?.max !== undefined && settings[id]?.max !== null && settings[id].max > 0) 
+        ? settings[id].max 
+        : undefined;
+
+    const yMin =
+        (settings[id]?.min !== undefined && settings[id]?.min !== null && yMax !== undefined)
+        ? settings[id].min
+        : undefined
+
     const chartData = {
-        labels: dataPoints.map((p) => new Date(p.t).toLocaleTimeString()),
+        labels: dataPoints.map((point) => new Date(point.time).toLocaleTimeString()),
         datasets: [
             {
                 label: 'Sensor value',
-                data: dataPoints.map((p) => p.v),
-                borderColor: "#71c7c7",
+                data: dataPoints.map((point) => {
+                    const sensorData = point.data as Record<number, number | null >;
+                    return sensorData[id] ?? null;
+                }),
+                borderColor: "#207b3a",
                 tension: 0.2,
                 pointRadius: 0,
             },
@@ -39,8 +55,10 @@ const Chart = ({dataPoints} : Props) => {
             x: { display: false }, 
             y: { 
                 beginAtZero: false,
-                grid: {color: "#ffffff80"},
-                ticks: { color: '#ffffff80' }
+                grid: {color: "#828282"},
+                ticks: { color: '#828282' },
+                min: yMin,
+                max: yMax
             },
             
         },
@@ -50,7 +68,13 @@ const Chart = ({dataPoints} : Props) => {
     };
 
   return (
-    <Line data={chartData} options={options} />
+
+    <div className=" w-full h-72 border rounded-lg shadow-xl/50">
+        <h2 className="m-auto text-center py-2 border-b" style={{backgroundColor: "var(--secondary)"}}>CHART [{id}]</h2>
+        <div className="p-5">
+            <Line data={chartData} options={options} />
+        </div>
+    </div>
   )
 }
 

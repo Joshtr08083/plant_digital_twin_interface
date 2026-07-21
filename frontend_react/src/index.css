@@ -1,24 +1,51 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+/* DARK https://www.realtimecolors.com/?colors=ffffff-212529-dd9896-207b3a-b5cc61&fonts=Inter-Inter */
+/* LIGHT https://www.realtimecolors.com/?colors=000000-d5d9dd-b26566-c1d1a4-8fc182&fonts=Inter-Inter */
 :root {
   --text: #ffffff;
-  --text-h: #f3f4f6;
-  --bg: #212529;
-  --border: #43474A;
+  --text-opp: #000;
+  --background: #212529;
+  --primary: #dd9896;
+  --secondary: #327044;
+  --accent: #b5cc61;
+  --select-bg: #ffffff94;
+  --select-text: #000000;
+
+  color-scheme: light dark;
 
   background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --text: #000000;
+    --text-opp: #fff;
+    --background: #d5d9dd;
+    --primary: #b26566;
+    --secondary: #c1d1a4;
+    --accent: #8fc182;
+    --select-bg: #9fcea2;
+    --select-text: #000000;
+  }
 }
 
 #root {
   min-width: 100%;
 }
 
+h1 {
+  font-weight: 300;
+}
+
 p, h1, h2, h3, h4, h5, h6 {
-  color: var(--text);
   border-color: var(--border);
 }

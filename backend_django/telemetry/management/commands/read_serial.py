@@ -33,11 +33,11 @@ class Command(BaseCommand):
                 if not line:
                     continue
                 
-                status, value, error = self.parse_line(line)
+                status, data, error = self.parse_line(line)
                 
                 buffer.append(SensorReading(
                     raw_line=line,
-                    value=value,
+                    data=data,
                     status=status,
                     error=error,
                 ))
@@ -55,7 +55,7 @@ class Command(BaseCommand):
                             "reading": {
                                 "timestamp": timezone.now().isoformat(),
                                 "raw": line,
-                                "value": value,
+                                "data": data,
                                 "status": status,
                                 "error": error,
                             },
@@ -79,17 +79,17 @@ class Command(BaseCommand):
                 
     def parse_line(self, line):
         try:
-            data = json.loads(line)
-            status = data.get('status')
-            value = data.get('value')
-            error = data.get('error')
-            return status, value, error
+            raw_data = json.loads(line)
+            status = raw_data.get('status')
+            data = raw_data.get('data')
+            error = raw_data.get('error')
+            return status, data, error
         except (json.JSONDecodeError, AttributeError):
             last_brace = line.rfind('{')
             if last_brace > 0:
                 try:
-                    data = json.loads(line[last_brace:])
-                    return data.get('status'), data.get('value'), data.get('error')
+                    raw_data = json.loads(line[last_brace:])
+                    return raw_data.get('status'), raw_data.get('data'), raw_data.get('error')
                 except (json.JSONDecodeError, AttributeError):
                     pass
             return None, None, f"unparseable line: {line[:100]}"

@@ -1,28 +1,45 @@
 import Chart from './components/Chart'
 import './App.css'
 import Plant from "./components/Plant"
-import { useWebsockets } from './api/WebSockets';
-import Table from "./components/Table"
+import { useWebsockets } from './api/useWebsockets';
+import ReadingsTable from "./components/ReadingsTable"
+import { useSettings} from "./api/useSettings"
+import SettingsTable from './components/SettingsTable';
+import { useEffect } from 'react';
 
 function App() {
-  const { dataPoints, status } = useWebsockets(5);
+  const { dataPoints } = useWebsockets(5);
+  const { settings, updateSetting, ensureSettings, loading } = useSettings();
 
+  useEffect(() => {
+        if (loading) return;
+
+        const latest = dataPoints.at(-1);
+        if (!latest) return;
+
+        Object.keys(latest.data).forEach((id) => {
+          if (!settings[id]) {
+            ensureSettings(id);
+          }
+        });
+    }, [dataPoints, settings, ensureSettings, loading]);
+  
   return (
     <>
-      <main>
+      <main className="relative">
         <div className="w-full h-full flex flex-row">
-          <div className="ml-0 w-xl flex flex-col h-full pl-6 justify-center">
-            <div className="m-auto w-full h-64">
-              <Chart dataPoints={dataPoints}/>
-            </div>
+          <div className="ml-0 w-xl flex flex-col h-full pl-6 justify-center items-center gap-10">
+            <ReadingsTable dataPoints={dataPoints}/>
+            <Chart dataPoints={dataPoints} id={0} settings={settings} />            
           </div>
-          <div className="mx-auto flex flex-col h-full overflow-visible w-2xl grow">
+          <div className="mx-auto flex flex-col h-full overflow-visible w-2xl grow z-10">
             <Plant />
           </div>
           <div className="mr-0 w-xl flex flex-col h-full pr-6 justify-center">
-              <Table dataPoints={dataPoints}/>
+            <SettingsTable settings={settings} updateSetting={updateSetting}/>
           </div>
         </div>
+        <h1 className="absolute left-1/2 -translate-x-1/2 top-5 text-4xl border-b-2 pb-2 px-20">PLANT VIEWER</h1>
       </main>
     </>
 

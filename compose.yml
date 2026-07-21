@@ -3,10 +3,12 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    container_name: redis
     command: redis-server --requirepass ${REDIS_PASSWORD}
 
   database:
     image: postgres:16
+    container_name: database
     restart: unless-stopped
     env_file: .env
     ports:
@@ -22,6 +24,7 @@ services:
   migrate:
     build: .
     image: joshtr083/pdigtwinterface:latest
+    container_name: migrate
     env_file: .env
     depends_on:
       database:
@@ -31,6 +34,7 @@ services:
   webapp:
     build: .
     image: joshtr083/pdigtwinterface:latest
+    container_name: webapp
     restart: unless-stopped
     env_file: .env
     ports:
@@ -45,6 +49,7 @@ services:
   telemetry:
     build: .
     image: joshtr083/pdigtwinterface:latest
+    container_name: telemetry
     restart: unless-stopped
     env_file: .env
     devices:

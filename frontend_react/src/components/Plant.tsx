@@ -17,7 +17,6 @@ import { useGLTF } from '@react-three/drei'
 import { type GLTF } from 'three-stdlib'
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useEffect } from 'react';
 
 type GLTFResult = GLTF & {
   nodes: {
