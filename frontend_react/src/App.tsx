@@ -38,7 +38,7 @@ function App() {
             <SettingsTable settings={settings} updateSetting={updateSetting}/>
           </div>
         </div>
-        <h1 className="absolute left-1/2 -translate-x-1/2 top-5 text-4xl border-b-2 pb-2 px-20">PLANT VIEWER</h1>
+        <h1 className="absolute left-1/2 -translate-x-1/2 top-5 text-4xl pb-2 px-20" style={{borderBottom: "2px solid var(--secondary)"}}>PLANT VIEWER</h1>
       </main>
     </>
 
