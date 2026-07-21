@@ -30,16 +30,14 @@ function App() {
   return (
     <>
       <main className="relative flex flex-col xl:flex-row gap-10 " style={{backgroundColor: "var(--bg)"}}>
-        <div className="mx-auto flex flex-col overflow-visible w-full z-10 min-h-[80%] xl:absolute xl:h-screen">
+        <div className="mx-auto flex flex-col overflow-visible w-full z-10 h-[70vh] xl:absolute xl:h-screen">
           <Plant leafStates={leafStates}/>
         </div>
         <div className="mx-auto w-full flex flex-col justify-center items-center gap-10 px-3 z-20 xl:w-sm 2xl:w-lg">
           <ReadingsTable latest={latest} previous={previous} absPerDiffs={absPerDiffs}/>
           <Chart dataPoints={dataPoints} settings={settings} />            
         </div>
-        <div className="hidden xl:block xl:grow">
-
-        </div>
+        <div className="hidden xl:block xl:grow"></div>
         <div className="mx-auto w-full flex flex-col items-center justify-center z-20 px-3 pb-30 xl:pb-0 xl:w-xs 2xl:w-lg">
           <SettingsTable settings={settings} updateSetting={updateSetting}/>
         </div>

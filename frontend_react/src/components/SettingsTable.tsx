@@ -1,6 +1,6 @@
 import type { Setting, SettingsMap } from "../api/useSettings"
 import type { ChangeEvent, KeyboardEvent } from "react";
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import EditableCell from "./EditableCell";
 import "./Table.css"
 
@@ -62,7 +62,7 @@ const SettingsTable = ({settings, updateSetting} : Props) => {
         }
     };
 
-    const sharedProps = {
+    const sharedProps = useMemo(() => ({
         editingId,
         editingColumn,
         editingData,
@@ -70,7 +70,7 @@ const SettingsTable = ({settings, updateSetting} : Props) => {
         onDoubleClick: handleDoubleClick,
         onChange: handleInputChange,
         onKeyDown: handleKeyDown,
-    };
+    }), [editingId, editingColumn, editingData, inputRef]);
 
     return (
         <div className="overflow-x-auto border rounded-lg shadow-xl/50">
@@ -116,4 +116,4 @@ const SettingsTable = ({settings, updateSetting} : Props) => {
     )
 }
 
-export default SettingsTable
+export default React.memo(SettingsTable)

@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react'
 import "./Table.css"
 
 import type { SensorData, AbsPerDiffs } from "../api/useReadings"
@@ -9,6 +10,29 @@ interface Props {
 }
 
 const ReadingsTable = ({latest, previous, absPerDiffs} : Props) => {
+    const rows = useMemo(() => {
+        if (!latest) return null;
+        return Object.entries(latest).map(([id, reading]) => (
+            <tr key={id}>
+                <td>{id}</td>
+                <td>{reading ?? "NA"}</td>
+                {
+                    (previous && id in previous && absPerDiffs && id in absPerDiffs)?(
+                        <>  
+                            <td>{(previous as any)[id] ?? "NA"}</td>
+                            <td>{`${(absPerDiffs as any)[id].toFixed(2)}%`}</td>
+                        </>
+                    ):
+                    (
+                        <>
+                            <td>NA</td>
+                            <td>NA</td>
+                        </>
+                    )
+                }
+            </tr>
+        ));
+    }, [latest, previous, absPerDiffs]);
 
     return (
     <div className="overflow-x-auto border rounded-lg shadow-xl/50">
@@ -23,40 +47,14 @@ const ReadingsTable = ({latest, previous, absPerDiffs} : Props) => {
                 </tr>
             </thead>
             <tbody>
-                {
-                    (latest)?
-                    (
-                        Object.entries(latest).map(([id, reading]) => (
-                            <tr key={id}>
-                                <td>{id}</td>
-                                <td>{reading ?? "NA"}</td>
-                                {
-                                    (previous && id in previous && absPerDiffs && id in absPerDiffs)?(
-                                        <>  
-                                            <td>{previous[id] ?? "NA"}</td>
-                                            <td>{`${absPerDiffs[id].toFixed(2)}%`}</td>
-                                        </>
-                                    ):
-                                    (
-                                        <>
-                                            <td>NA</td>
-                                            <td>NA</td>
-                                        </>
-                                    )
-                                    }
-                            </tr>
-                        ))
-                    ):
-                    (
-                        <tr>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
-                            <td>NA</td>
-                        </tr>
-                    )
-                    
-                }
+                {rows ?? (
+                    <tr>
+                        <td>NA</td>
+                        <td>NA</td>
+                        <td>NA</td>
+                        <td>NA</td>
+                    </tr>
+                )}
             </tbody>
         </table>
     </div>
@@ -64,4 +62,4 @@ const ReadingsTable = ({latest, previous, absPerDiffs} : Props) => {
     )
 }
 
-export default ReadingsTable
+export default React.memo(ReadingsTable)

@@ -43,4 +43,4 @@ const EditableCell = ({
     )
 }
 
-export default EditableCell
+export default React.memo(EditableCell)
