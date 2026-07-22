@@ -25,8 +25,9 @@ const Chart = ({dataPoints, settings} : Props) => {
 
     useEffect(() => {
         const first = Object.keys(settings)[0];
+        if (chartId != null && chartId in settings) return;
         if (first) setChartId(first);
-    }, [settings]);
+    }, [settings, chartId]);
 
     const yMax = 
         (chartId != null && settings[chartId]?.max != null && settings[chartId].max > 0) 

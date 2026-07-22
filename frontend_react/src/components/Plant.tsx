@@ -21,6 +21,9 @@ import { useEffect, useRef } from 'react';
 
 import type { LeafStates } from '../api/useReadings';
 export type MaterialKey = 'stem1' | 'stem2' | 'stem3' | 'stem4'
+
+const modelUrl = `${import.meta.env.BASE_URL}plantb.glb`;
+
 const idToLeafMatMap: Record<string, MaterialKey> = {
     "0": 'stem1',
     "1": 'stem2',
@@ -67,7 +70,7 @@ const leaf_active_color = new THREE.Color().lerpColors(
 );
 
 export function Plant({leafStates} : Props) {
-  const { nodes, materials } = useGLTF('/plantb.glb') as unknown as GLTFResult
+  const { nodes, materials } = useGLTF(modelUrl) as unknown as GLTFResult
 
   const resetMatTimeout = useRef<Record<MaterialKey, ReturnType<typeof setTimeout>>>({ stem1: undefined as any, stem2: undefined as any, stem3: undefined as any, stem4: undefined as any });
   
@@ -126,4 +129,4 @@ export function Plant({leafStates} : Props) {
 
 export default Plant;
 
-useGLTF.preload('/plant.gltf')
+useGLTF.preload(modelUrl)

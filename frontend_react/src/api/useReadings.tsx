@@ -32,7 +32,11 @@ export function useReadings(dataPoints : DataPoint[], settings : SettingsMap, fi
 
         const newAbsPerDiffs = Object.fromEntries(
             Object.entries(latest).map(
-                ([id, reading]) => [id, Math.abs((((reading as any) - (previous as any)[id]) / ((previous as any)[id] || 1)) * 100)]
+                ([id, reading]) => {
+                    if (!(previous as any)[id]) return [id, 0]
+                    const abs = Math.abs((((reading as any) - (previous as any)[id]) / ((previous as any)[id] || 1)) * 100)
+                    return [id, abs]
+                }
             )
         ) as AbsPerDiffs;
 
