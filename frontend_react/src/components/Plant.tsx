@@ -84,7 +84,6 @@ export function Plant({leafStates} : Props) {
         }
         resetMatTimeout.current[matId] = setTimeout(() => {
           const cachedMat = materials_cache.current[matId];
-          console.log(mat);
           if (cachedMat) {
             mat.map = cachedMat.map;
             mat.color.copy(cachedMat.color);
