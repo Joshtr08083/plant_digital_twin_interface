@@ -33,7 +33,7 @@ services:
 
   webapp:
     build: .
-    image: joshtr083/pdigtwinterface:latest
+    image: joshtr083/pdigtwinterface
     container_name: webapp
     restart: unless-stopped
     env_file: .env
@@ -48,7 +48,7 @@ services:
   
   telemetry:
     build: .
-    image: joshtr083/pdigtwinterface:latest
+    image: joshtr083/pdigtwinterface
     container_name: telemetry
     restart: unless-stopped
     env_file: .env

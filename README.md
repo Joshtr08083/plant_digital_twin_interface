@@ -1,29 +1,122 @@
 
 # Plant Sensor Digital Twin Interface  
-
-## Summary  
+ 
 The purpose of this project is to provide a digital twin interface for plant sensors to detect mechanical stimuli and in the future other environmental factors
+&nbsp;  
+&nbsp;  
+
+
+## Installation/Setup
+>&nbsp;  
+>This asssumes hardware is setup correctly, with one arduino/esp32 reading sensors and another esp32 connected via usb to the server, and the microcontrollers have the correct software. **You will also need Docker installed.**
+>&nbsp;  
+> &nbsp;  
+  
+### Linux
+
+#### 1. Create a directory, such as 
+```bash
+mkdir pdtwinterface && cd pdtwinterface
+```
+&nbsp;  
+
+#### 2. From [Github](https://github.com/Joshtr08083/plant_digital_twin_interface) download `env.example` and `compose.yml`
+```bash
+curl -O https://raw.githubusercontent.com/Joshtr08083/plant_digital_twin_interface/main/compose.yml
+curl -O https://raw.githubusercontent.com/Joshtr08083/plant_digital_twin_interface/main/.env.example
+```
+&nbsp;  
+
+#### 3. Edit the following in .env.example, and then rename to .env   
+
+| key               | desc                              |
+|:------------------|-----------------------------------|
+| POSTGRES_PASSWORD | secure completely random password |
+| DJANGO_SECRET_KEY | another new secure password       |
+| REDIS_PASSWORD    | secure password                   |
+| SERIAL_PORT       | USB port ESP32 is connected to    |  
+&nbsp;  
+
+To find ESP32 port run this (if multiple you may have to just guess):
+```bash
+ls /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+```
+&nbsp;  
+
+#### 4. Pull image from dockerhub 
+```bash
+docker compose pull
+```
+Then start the container
+```bash
+docker compose up -d
+```
+**The server might need 10-15s before it can actually handle connections**
+
+&nbsp;  
+#### 5. If everything worked correctly, go to [http://localhost:8000](http://localhost:8000)  to view the dashboard
+
+&nbsp;  
+
+### Windows/Mac
+>&nbsp;   
+> Docker on Windows/Mac can't natively read Serial devices. The main difference is instead of running telemetry container, you can run the telemetetry python script natively.
+>&nbsp;  
+>&nbsp;  
+
+#### 1. Download [Python 3.14+](https://www.python.org/downloads/)
+#### 2. Download [Github repository](https://github.com/Joshtr08083/plant_digital_twin_interface) 
+#### 3. Setup `.env.example` and rename to `.env`
+Linux section discusses this, its the same process, rename to .env. 
+- On windows you can find pport in Device Manager > Ports
+- On MacOS you *should* be able to run `ls /dev/tty.*` to find it (I haven't tested this I just looked it up)
+
+&nbsp;  
+#### 4. Rename `.env.windows.example` to `.env.windows`
+This *should* apply to MacOS too, but bear with me as I haven't been able to test it on MacOS yet (because I don't have a MacBook).
+
+&nbsp;  
+
+#### 5. Pull docker image `joshtr083/pdigtwinterface:latest`
+Using Docker CLI you can run:
+```bash
+docker compose -f docker-compose.yml -f docker-compose.windows.yml pull
+```
+&nbsp;  
+#### 6. Run docker containers
+```bash
+docker compose -f docker-compose.yml -f docker-compose.windows.yml up -d
+```
+
+
+&nbsp;  
+&nbsp;  
 
 ## Hardware
-1. Arduino &nbsp; | &nbsp; Data collection and processing 
-2. ESP32&nbsp; &nbsp; &nbsp; | &nbsp; Wireless communication
-    *Two ESP32s are used for ESPNOW communication for wireless arduino -> servo communication
+| Component | Purpose |
+|:----------|:--------|
+| Arduino   | Data collection |
+| ESP32 (A) | UART Serail communication with Arduino and wirelesss communication |
+| ESP32 (B) | Wireless communication with ESP32 (A) and USB Serial communication with Server |
+
+&nbsp;  
 
 ## Software
 
-### Arduino
-The arduino uses a simple cpp program to detect stimuli by % differences in readings
-```cpp
-    int touchReading = analogRead(TOUCH_ONE);
-    float perDiff = (float)(((touchReading - pastReading) * 100.00) / pastReading);
-    pastReading = touchReading;
+### Arduino `microcontrollers/arduino_sensors/`
+The arduino uses a simple cpp program to read the sensors
 
-    if (abs(perDiff) > threshold) {
-        Serial.println("Mechanical stimuli");
-    }
-    delay(50);
-```
+###  ESP32 (Sender) `microcontrollers/esp32_sender/`
+This ESP32 is directly connected over UART to the Arduino and then sends the sensor readings over ESP-NOW
 
-### Server
-The server runs Django, which communicates with the esp32 network and serves the React frontend built using Vite
+### ESP32 (Receiver) `microcontrollers/esp32_receiver/`
+This ESP32 is wirelessly connected over ESP-NOW to receive sensor readings and send them to the server over USB/Serial
+
+### Server `backend_django/`
+Django server hosted via Docker that serves sensor readings, persistent configurations, and static frontend files. This server can be really anything, ideally something running linux. It does **not** have to be the same device that accesses the web dashboard.
+
+### Frontend/React `frontend_react/`
+React frontend compiled using Vite that displays plant model, sensor readings, chart, and table to the browser. It also performs computations for detecting stimuli and interacting with the database.
+
+
 
