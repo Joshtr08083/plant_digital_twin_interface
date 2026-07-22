@@ -16,7 +16,7 @@ The purpose of this project is to provide a digital twin interface for plant sen
 
 #### 1. Create a directory, such as 
 ```bash
-mkdir pdtwinterface && cd pdtwinterface
+mkdir pdigtwinterface && cd pdigtwinterface
 ```
 &nbsp;  
 
