@@ -79,15 +79,41 @@ This *should* apply to MacOS too, but bear with me as I haven't been able to tes
 &nbsp;  
 
 #### 5. Pull docker image `joshtr083/pdigtwinterface:latest`
-Using Docker CLI you can run:
+Using Docker CLI you can run (first use `cd`to navigate to the root directory of the project):
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.windows.yml pull
+docker compose -f compose.yml -f compose.windows.yml pull
 ```
 &nbsp;  
 #### 6. Run docker containers
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.windows.yml up -d
+docker compose -f compose.yml -f compose.windows.yml up -d
 ```
+&nbsp;  
+#### 8. Install python dependencies
+1. Create venv:
+```
+python -m pip venv venv
+```
+2. Activate venv
+```
+(Windows) .\venv\Scripts\Activate.ps1
+(MacOS) ./venv/bin/activate
+```
+> &nbsp;
+> If windows has error for Execution Policies, run:  
+> Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+> &nbsp;
+3. Upgrade pip and install from backend_django/requirements.txt
+```
+python -m pip install --upgrade pip
+python -m pip install -r ./backend_django/requirements.txt
+```
+
+#### 7. Start python script `run_telemetry_native.py`
+```
+python run_telemetry_native.py
+```
+If everything worked corrrectly, you should be able to visit [http://localhost:8000](htpp://localhost:8000)
 
 
 &nbsp;  
