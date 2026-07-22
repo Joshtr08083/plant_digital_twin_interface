@@ -49,7 +49,7 @@ export function useSettings() {
 
     function ensureSettings(id: string) {
         if (settings[id]) return
-        updateSetting(id, { threshold: 0, min: 0, max: 0 })
+        updateSetting(id, { threshold: 100, min: 0, max: 0 })
         .then(() => {
             console.log("Populated sensor settings for id: ", id)
         })
