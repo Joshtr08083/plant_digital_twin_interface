@@ -49,7 +49,7 @@ docker compose pull
 ```
 Then start the container
 ```bash
-docker compose up -d
+docker compose up -d --no-build
 ```
 **The server might need 10-15s before it can actually handle connections**
 
@@ -69,24 +69,25 @@ If everything worked correctly, go to [http://localhost:8000](http://localhost:8
 #### 2. Download [Github repository](https://github.com/Joshtr08083/plant_digital_twin_interface) 
 #### 3. Setup `.env.example` and rename to `.env`
 Linux section discusses this, its the same process, rename to .env. 
-- On windows you can find pport in Device Manager > Ports
+- On windows you can find pport in `Device Manager` > `Ports (COM & LPT)` > USB to UART Brdige
+    - If ESP32 is connected, but not in `Ports (COM & LPT)`, you may need to check `Other Devices` and install [drivers](https://www.silabs.com/software-and-tools/usb-to-uart-bridge-vcp-drivers?tab=downloads).
 - On MacOS you *should* be able to run `ls /dev/tty.*` to find it (I haven't tested this I just looked it up)
 
 &nbsp;  
 #### 4. Rename `.env.windows.example` to `.env.windows`
-This *should* apply to MacOS too, but bear with me as I haven't been able to test it on MacOS yet (because I don't have a MacBook).
+This *should* work for MacOS too, but bear with me as I haven't been able to test it on MacOS yet (because I don't have a MacBook).
 
 &nbsp;  
 
 #### 5. Pull docker image `joshtr083/pdigtwinterface:latest`
-Using Docker CLI you can run (first use `cd`to navigate to the root directory of the project):
+Using Docker CLI you can run (first use `cd` to navigate to the root directory of the project):
 ```bash
 docker compose -f compose.yml -f compose.windows.yml pull
 ```
 &nbsp;  
 #### 6. Run docker containers
 ```bash
-docker compose -f compose.yml -f compose.windows.yml up -d
+docker compose -f compose.yml -f compose.windows.yml up -d --no-build
 ```
 &nbsp;  
 #### 8. Install python dependencies
@@ -101,7 +102,7 @@ python -m pip venv venv
 ```
 > &nbsp;  
 > If windows has error for Execution Policies, run:  
-> Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+`Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process`
 > &nbsp;  
 > &nbsp;  
 
