@@ -99,10 +99,12 @@ python -m pip venv venv
 (Windows) .\venv\Scripts\Activate.ps1
 (MacOS) ./venv/bin/activate
 ```
-> &nbsp;
+> &nbsp;  
 > If windows has error for Execution Policies, run:  
 > Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
-> &nbsp;
+> &nbsp;  
+> &nbsp;  
+
 3. Upgrade pip and install from backend_django/requirements.txt
 ```
 python -m pip install --upgrade pip
@@ -129,6 +131,7 @@ If everything worked corrrectly, you should be able to visit [http://localhost:8
 | ESP32 (A) | UART Serail communication with Arduino and wirelesss communication |
 | ESP32 (B) | Wireless communication with ESP32 (A) and USB Serial communication with Server |
 | Server    | USB Serial communication with ESP32 (B) and serving webpage to client |
+
 &nbsp;  
 
 ### Software
