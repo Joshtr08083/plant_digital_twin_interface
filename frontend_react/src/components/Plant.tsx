@@ -30,14 +30,14 @@ type GLTFResult = GLTF & {
     Leaves: THREE.Mesh
     Cylinder001: THREE.Mesh
     Cylinder001_1: THREE.Mesh
-    Cylinder001_2: THREE.Mesh
+    Pot001: THREE.Mesh
     Stem: THREE.Mesh
   }
   materials: {
     leaves: THREE.MeshBasicMaterial
     ['Glazed ceramic']: THREE.MeshBasicMaterial
     Plastic: THREE.MeshStandardMaterial
-    ['Procedural Dirt']: THREE.MeshStandardMaterial
+    ['Procedural Dirt']: THREE.MeshBasicMaterial
     stem: THREE.MeshBasicMaterial
   }
 }
@@ -50,8 +50,6 @@ const leaf_active_color = new THREE.Color().lerpColors(
   new THREE.Color(0x69BFB6), 
   0.2
 );
-
-const dirtColor = new THREE.MeshBasicMaterial({ color: 0x120606});
 
 export function Plant({leafStates} : Props) {
   const { nodes, materials } = useGLTF(modelUrl) as unknown as GLTFResult
@@ -107,12 +105,14 @@ export function Plant({leafStates} : Props) {
             target={[0, 1, 0]}
             maxDistance={2.5}
         />
-        <group dispose={null} scale={3} position={[0, -0.3, 0]} rotation={[0, 36, 0]}>
+
+
+        <group scale={3} position={[0, -0.3, 0]} rotation={[0, 36, 0]} dispose={null}>
           <mesh geometry={nodes.Leaves.geometry} material={materials.leaves} />
+          <mesh geometry={nodes.Pot001.geometry} material={materials['Procedural Dirt']} position={[0, 0.012, 0]} />
           <mesh geometry={nodes.Stem.geometry} material={materials.stem} />
           <mesh geometry={nodes.Cylinder001.geometry} material={materials['Glazed ceramic']} />
           <mesh geometry={nodes.Cylinder001_1.geometry} material={materials.Plastic} />
-          <mesh geometry={nodes.Cylinder001_2.geometry} material={dirtColor} />
         </group>
     </Canvas>
   )
