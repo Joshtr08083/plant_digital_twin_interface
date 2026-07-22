@@ -37,7 +37,7 @@ curl -O https://raw.githubusercontent.com/Joshtr08083/plant_digital_twin_interfa
 | SERIAL_PORT       | USB port ESP32 is connected to    |  
   
 &nbsp;  
-To find ESP32 port run this (if multiple you may have to just guess):
+To find ESP32 port run this (if you have multiple to just guess):
 ```bash
 ls /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
 ```
@@ -54,7 +54,8 @@ docker compose up -d
 **The server might need 10-15s before it can actually handle connections**
 
 &nbsp;  
-#### 5. If everything worked correctly, go to [http://localhost:8000](http://localhost:8000)  to view the dashboard
+#### 5. Visit port 8000 in your browswer
+If everything worked correctly, go to [http://localhost:8000](http://localhost:8000)  to view the dashboard
 
 &nbsp;  
 
@@ -92,30 +93,33 @@ docker compose -f docker-compose.yml -f docker-compose.windows.yml up -d
 &nbsp;  
 &nbsp;  
 
-## Hardware
+## Components
+
+### Hardware
+
 | Component | Purpose |
 |:----------|:--------|
 | Arduino   | Data collection |
 | ESP32 (A) | UART Serail communication with Arduino and wirelesss communication |
 | ESP32 (B) | Wireless communication with ESP32 (A) and USB Serial communication with Server |
-
+| Server    | USB Serial communication with ESP32 (B) and serving webpage to client |
 &nbsp;  
 
-## Software
+### Software
 
-### Arduino `microcontrollers/arduino_sensors/`
+#### Arduino `microcontrollers/arduino_sensors/`
 The arduino uses a simple cpp program to read the sensors
 
-###  ESP32 (Sender) `microcontrollers/esp32_sender/`
+####  ESP32 (Sender) `microcontrollers/esp32_sender/`
 This ESP32 is directly connected over UART to the Arduino and then sends the sensor readings over ESP-NOW
 
-### ESP32 (Receiver) `microcontrollers/esp32_receiver/`
+#### ESP32 (Receiver) `microcontrollers/esp32_receiver/`
 This ESP32 is wirelessly connected over ESP-NOW to receive sensor readings and send them to the server over USB/Serial
 
-### Server `backend_django/`
+#### Server `backend_django/`
 Django server hosted via Docker that serves sensor readings, persistent configurations, and static frontend files. This server can be really anything, ideally something running linux. It does **not** have to be the same device that accesses the web dashboard.
 
-### Frontend/React `frontend_react/`
+#### Frontend/React `frontend_react/`
 React frontend compiled using Vite that displays plant model, sensor readings, chart, and table to the browser. It also performs computations for detecting stimuli and interacting with the database.
 
 
