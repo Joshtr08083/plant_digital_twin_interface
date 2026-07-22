@@ -3,8 +3,9 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 
+
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({command}) => ({
   plugins: [
     tailwindcss(),
     react(),
@@ -19,5 +20,5 @@ export default defineConfig({
       },
     }
   },
-  base: './'
-})
+  base: command === 'build' ? '/static/telemetry/app/' : '/',
+}))

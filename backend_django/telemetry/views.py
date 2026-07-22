@@ -1,13 +1,16 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.conf import settings
+from django.http import JsonResponse, FileResponse
 from .models import SensorReading, Settings, Configs
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
+import os
 
 @ensure_csrf_cookie
 def index(request):
-    return render(request, 'telemetry/index.html')
+    index_path = os.path.join(settings.BASE_DIR, 'telemetry', 'static', 'telemetry', 'app', 'index.html')
+    return FileResponse(open(index_path, 'rb'))
 
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
