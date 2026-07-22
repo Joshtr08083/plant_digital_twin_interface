@@ -131,7 +131,7 @@ If everything worked corrrectly, you should be able to visit [http://localhost:8
 | ESP32 (A) | UART Serail communication with Arduino and wirelesss communication |
 | ESP32 (B) | Wireless communication with ESP32 (A) and USB Serial communication with Server |
 | Server    | USB Serial communication with ESP32 (B) and serving webpage to client |
-
+  
 &nbsp;  
 
 ### Software
