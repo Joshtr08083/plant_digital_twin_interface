@@ -35,8 +35,8 @@ curl -O https://raw.githubusercontent.com/Joshtr08083/plant_digital_twin_interfa
 | DJANGO_SECRET_KEY | another new secure password       |
 | REDIS_PASSWORD    | secure password                   |
 | SERIAL_PORT       | USB port ESP32 is connected to    |  
+  
 &nbsp;  
-
 To find ESP32 port run this (if multiple you may have to just guess):
 ```bash
 ls /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
