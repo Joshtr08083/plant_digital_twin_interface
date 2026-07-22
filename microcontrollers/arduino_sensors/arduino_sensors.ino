@@ -22,10 +22,10 @@ class TOUCH_SENSOR {
 };
 
 TOUCH_SENSOR sensors[] = {
-  TOUCH_SENSOR(0, A8),
-  TOUCH_SENSOR(1, A7),
-  TOUCH_SENSOR(2, A6),
-  TOUCH_SENSOR(3, A5)
+  TOUCH_SENSOR(0, A8)
+  // TOUCH_SENSOR(1, A7),
+  // TOUCH_SENSOR(2, A6),
+  // TOUCH_SENSOR(3, A5)
 };
 const int numSensors = sizeof(sensors) / sizeof(sensors[0]);
 

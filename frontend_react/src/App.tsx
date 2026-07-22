@@ -8,7 +8,6 @@ import { useReadings } from './api/useReadings';
 import SettingsTable from './components/SettingsTable';
 import { useEffect } from 'react';
 import Alert from './components/Alert';
-import EmojiScreen from './components/EmojiScreen';
 import { useConfigs } from './api/useConfigs';
 import { asBool } from './api/useConfigs';
 import FireDetectorButton from './components/FireDetectorButton';
@@ -17,7 +16,7 @@ function App() {
   const { dataPoints } = useWebsockets(5);
   const { settings, updateSetting, ensureSettings, loading } = useSettings();
   const { configs, updateConfigs }= useConfigs();
-  const { latest, previous, absPerDiffs, leafStates, leafPressed, showEmojis, setShowEmojis} = useReadings(dataPoints, settings, asBool(configs["FireMode"], false));
+  const { latest, previous, absPerDiffs, leafStates, leafPressed} = useReadings(dataPoints, settings, asBool(configs["FireMode"], false));
 
   useEffect(() => {
         if (loading) return;
@@ -46,8 +45,7 @@ function App() {
         </div>
         <h1 className="absolute left-1/2 -translate-x-1/2 top-5 text-4xl pb-2 px-20" style={{borderBottom: "2px solid var(--secondary)"}}>PLANT VIEWER</h1>
         <Alert leafPressed={leafPressed} fire={asBool(configs["FireMode"], false)} />
-        <EmojiScreen showEmojis={showEmojis} onClose={() => setShowEmojis(false)} />
-          <FireDetectorButton fire={asBool(configs["FireMode"], false)} updateConfigs={updateConfigs} />
+        <FireDetectorButton fire={asBool(configs["FireMode"], false)} updateConfigs={updateConfigs} />
       </main>
     </>
 

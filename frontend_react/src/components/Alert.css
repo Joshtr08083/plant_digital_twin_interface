@@ -6,21 +6,33 @@
 .Mechanical {
     background-color: hsla(from var(--secondary) h calc(s - 10) calc(l - 10) / 100%);
 }
-@media (min-width: 1024px) {
-  
-    .Mechanical {
-        background-color: hsla(from var(--secondary) h calc(s - 10) calc(l - 10) / 80%);
-    }
-}
-
 .Fire {
     background-color: #121619;
     color: #881600;
     font-size: 3rem;
     font-weight: 900;
-    top: 20%;
-    transform: translateY(-50%);
+    top: 50%;
+    transform: translateY(-70%);
+    height: 200px;
 }
+
+@media (min-width: 1024px) {
+    .Fire {
+        background-color: #121619;
+        color: #881600;
+        font-size: 3rem;
+        font-weight: 900;
+        top: 20%;
+        transform: translateY(-70%);
+        height: 150px;
+    }
+
+    .Mechanical {
+        background-color: hsla(from var(--secondary) h calc(s - 10) calc(l - 10) / 80%);
+    }
+}
+
+
 
 .showAlert {
     display:flex;

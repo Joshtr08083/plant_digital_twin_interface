@@ -19,7 +19,7 @@ const Alert = ({leafPressed, fire}: Props) => {
             if (hideAlert.current) {
                 clearTimeout(hideAlert.current);
             }
-            hideAlert.current = setTimeout(() => {setAlertVisible(false)}, fire? 10000 : 1000);
+            hideAlert.current = setTimeout(() => {setAlertVisible(false)}, fire? 5000 : 1000);
             return;
         }
         if (hideAlert.current) {
@@ -34,10 +34,21 @@ const Alert = ({leafPressed, fire}: Props) => {
     }, [leafPressed, fire])
 
     return (
-        <div className={`flex fixed bottom-10 left-0 w-full alert p-0 z-30 alertBox text-xl py-10 px-5
+        <>
+        <div className={`flex fixed bottom-10 left-0 w-full h-auto alert p-0 z-30 alertBox text-xl py-10 px-5 text-center
                         lg:left-1/2 lg:bottom-auto lg:top-20 lg:-translate-x-1/2 lg:w-auto lg:px-10 lg:py-5
                         ${alertVisible ? "showAlert" : ""} ${alertType} 
-            `}>{alertContent}</div>
+    `}>{alertContent}</div>
+        {alertType === "Fire" &&
+            <div 
+                className={`flex fixed top-[10%] left-[55%] w-full p-0 z-30 alertBox text-9xl py-10 px-5
+                             lg:top-80 lg:w-auto lg:px-10 lg:py-5
+                            ${alertVisible ? "showAlert" : ""}
+            `}>
+                🔥
+            </div>
+        }
+        </>
     )
 }
 

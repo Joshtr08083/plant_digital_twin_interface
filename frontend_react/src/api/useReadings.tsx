@@ -24,7 +24,6 @@ export function useReadings(dataPoints : DataPoint[], settings : SettingsMap, fi
     const latest = useMemo(() => dataPoints.at(-1)?.data, [dataPoints]);
     const previous = useMemo(() => dataPoints.at(-2)?.data, [dataPoints]);
     const [leafPressed, setLeafPressed] = useState<string | null>(null);
-    const [showEmojis, setShowEmojis] = useState<boolean>(false);
 
     useEffect(() => {
         if (!latest || !previous) return;
@@ -55,9 +54,9 @@ export function useReadings(dataPoints : DataPoint[], settings : SettingsMap, fi
 
         const pressed = Object.entries(newLeafStates as Record<string, boolean>).find(([, v]) => v)?.[0] ?? null;
         setLeafPressed(pressed);
-        if (pressed && fire && !showEmojis) setShowEmojis(true);
-    }, [latest, previous, settings, fire, showEmojis]);
+
+    }, [latest, previous, settings, fire]);
 
 
-    return {latest, previous, absPerDiffs, leafStates, leafPressed, showEmojis, setShowEmojis}
+    return {latest, previous, absPerDiffs, leafStates, leafPressed}
 }
